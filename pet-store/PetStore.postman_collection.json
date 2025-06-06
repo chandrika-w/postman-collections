@@ -1,0 +1,240 @@
+{
+	"info": {
+		"_postman_id": "fe995a32-3243-464b-8111-08e6a8d973ee",
+		"name": "PetStore",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add a pet",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//Generate random pet id\r",
+							"const randomNumber = _.random(100,999)\r",
+							"pm.environment.set('randomPetId', randomNumber )\r",
+							"\r",
+							"//Generate random pet name\r",
+							"const randomName = pm.variables.replaceIn(\"{{$randomWord}}\")\r",
+							"pm.environment.set('randomPetName', randomName )\r",
+							"\r",
+							"pm.environment.set('petStatus', 'available' ) "
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response PetId must match the request pet id\", function () {\r",
+							"  pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"randomPetId\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response PetName must match the request pet name\", function () {\r",
+							"  pm.expect(pm.response.json().name).to.eql(pm.environment.get(\"randomPetName\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response PetStatus must match the request pet status\", function () {\r",
+							"  pm.expect(pm.response.json().status).to.eql(pm.environment.get(\"petStatus\"));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": {{randomPetId}},\n    \"name\": \"{{randomPetName}}\",\n    \"category\": {\n        \"id\": 1,\n        \"name\": \"Dogs\"\n    },\n    \"photoUrls\": [\n        \"{{$randomAvatarImage}}\"\n    ],\n    \"tags\": [\n        {\n            \"id\": 100,\n            \"name\": \"{{$randomLoremWord}}\"\n        }\n    ],\n    \"status\": \"{{petStatus}}\"\n}"
+				},
+				"url": {
+					"raw": "{{schema}}://{{host}}/api/v3/pet",
+					"protocol": "{{schema}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v3",
+						"pet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update an existent pet",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set('petStatus', 'unavailable' )"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response PetStatus must match the request pet status\", function () {\r",
+							"  pm.expect(pm.response.json().status).to.eql(pm.environment.get(\"petStatus\"));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": {{randomPetId}},\n    \"name\": \"{{randomPetName}}\",\n    \"category\": {\n        \"id\": 1,\n        \"name\": \"Dogs\"\n    },\n    \"photoUrls\": [\n        \"{{$randomAvatarImage}}\"\n    ],\n    \"tags\": [\n        {\n            \"id\": 100,\n            \"name\": \"{{$randomLoremWord}}\"            \n        }\n    ],\n    \"status\": \"{{petStatus}}\"\n}"
+				},
+				"url": {
+					"raw": "{{schema}}://{{host}}/api/v3/pet",
+					"protocol": "{{schema}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v3",
+						"pet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find a pet by Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response PetId must match the request pet id\", function () {\r",
+							"  pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"randomPetId\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response PetName must match with the correct pet name\", function () {\r",
+							"  pm.expect(pm.response.json().name).to.eql(pm.environment.get(\"randomPetName\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response PetStatus must match with the correct pet status\", function () {\r",
+							"  pm.expect(pm.response.json().status).to.eql(pm.environment.get(\"petStatus\"));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{schema}}://{{host}}/api/v3/pet/{{randomPetId}}",
+					"protocol": "{{schema}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v3",
+						"pet",
+						"{{randomPetId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find pets by status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{schema}}://{{host}}/api/v3/pet/findByStatus?status=pending",
+					"protocol": "{{schema}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v3",
+						"pet",
+						"findByStatus"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "pending"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
